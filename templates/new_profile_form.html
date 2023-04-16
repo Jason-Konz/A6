@@ -23,7 +23,7 @@ body {
 </ul>
 {% endif %}
 
-<form action="{{ url_for('profile') }}" method="POST">
+<form action="{{ url_for('profile') }}" method="POST" enctype = "multipart/form-data">
 <div class="mb-3">
   <label for="username" class="form-label">Username</label>
   <input class="form-control" type="text" id="username" name="username">

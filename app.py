@@ -29,7 +29,9 @@ def get_username():
     return None
 
 def authenticate(username, password):
-    if username == 'cartman' and password == 'beefcake':
+    user = Profile.query.filter_by(username=username).first()
+    
+    if user and username == user.username and password == user.password:
         session['username'] = username
         return True
 
@@ -89,32 +91,33 @@ def new_profile_form():
 
 @app.route('/profile/', methods=["POST"])
 def profile():
-    print("Made it")
     new_username = request.form["username"]
+    print(type(new_username))
     new_password = request.form["password"]
+    print(type(new_password))
     new_email = request.form["email"]
+    print(type(new_email))
     infile = request.files["img"]
-    infile.filename = new_username + infile.filename
-    filename = secure_filename(infile)
+    infile.filename = new_username + "-" + infile.filename
+    filename = secure_filename(infile.filename)
     filepath = os.path.join(IMAGE_DIR, filename)
 
-    print("Made it 1")
     if '' in [new_username, new_password, new_email] or not infile:
-        return redirect(url_for("new_profile_form"), \
+        return render_template("new_profile_form.html", \
             messages=['Please fill in all fields'])
 
-    print("Made it 2")
     user = Profile.query.filter_by(username=new_username).first()
-    print("Made it 3")
+
     if user:
-        return redirect(url_for("new_profile_form"), \
+        return render_template("new_profile_form.html", \
             messages=[f'{new_username} is already taken'])
-    print("Made it 4")
+
     infile.save(filepath)
     newprofile = Profile(username=new_username, password=new_password, \
-                         email=new_email, photofn=filename, posts=None)
-    print("Made it 5")
+                        email=new_email, photofn=filename, posts=[])
+
     db.session.add(newprofile)
     db.session.commit()
-    print("Made it 6")
+
     return redirect(url_for("login_form"))
+    
