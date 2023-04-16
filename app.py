@@ -84,7 +84,6 @@ def logout():
     return render_template('login_form.html', \
             messages=['Logged out. Thanks for visiting this site.'])
 
-
 @app.route('/profile/new/', methods=["GET"])
 def new_profile_form():
     return render_template('new_profile_form.html')
@@ -92,11 +91,8 @@ def new_profile_form():
 @app.route('/profile/', methods=["POST"])
 def profile():
     new_username = request.form["username"]
-    print(type(new_username))
     new_password = request.form["password"]
-    print(type(new_password))
     new_email = request.form["email"]
-    print(type(new_email))
     infile = request.files["img"]
     infile.filename = new_username + "-" + infile.filename
     filename = secure_filename(infile.filename)
