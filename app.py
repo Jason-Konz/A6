@@ -94,13 +94,14 @@ def profile():
     new_password = request.form["password"]
     new_email = request.form["email"]
     infile = request.files["img"]
-    infile.filename = new_username + "-" + infile.filename
-    filename = secure_filename(infile.filename)
-    filepath = os.path.join(IMAGE_DIR, filename)
-
     if '' in [new_username, new_password, new_email] or not infile:
         return render_template("new_profile_form.html", \
             messages=['Please fill in all fields'])
+    infile.filename = new_username + "-" + infile.filename
+    filename = secure_filename(infile.filename)
+    filepath = os.path.join(IMAGE_DIR, filename)
+    print(infile)
+
 
     user = Profile.query.filter_by(username=new_username).first()
 
