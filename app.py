@@ -39,7 +39,7 @@ def authenticate(username, password):
 
 def is_secure_route(request):
     return request.path not in ['/login/', '/logout/', '/profile/', '/profile/new/'] and \
-        not request.path.startswith('/static/')
+        not request.path.startswith('/static/') and not (request.path == '/profile/' and request.method == 'GET')
 
 @app.before_request
 def login_redirect():
@@ -118,3 +118,15 @@ def profile():
 
     return redirect(url_for("login_form"))
     
+@app.route('/profile/', methods=["GET"])
+def get_profile():
+    user = Profile.query.filter_by(username=get_username()).first()
+    print(user.id)
+    return render_template("profile_page.html",user=user)
+
+@app.route('/profile/<int:profile_id>/', methods=["GET"])
+def get_profile_by_id(profile_id):
+    print("hello")
+    user = Profile.query.filter_by(id=profile_id)
+    print(user.username)
+    return render_template("profile_page.html",user=user)
