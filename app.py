@@ -196,7 +196,7 @@ def unlike_post(current_post_id):
 
     return 'ok'
 
-@app.route('/api/posts/<int:post_id>/likes/', ['GET'])
+@app.route('/api/posts/<int:post_id>/likes/', methods=['GET'])
 def get_likes(current_post_id):
     post = Post.query.filter_by(post_id=current_post_id)
     likes=post.likes
