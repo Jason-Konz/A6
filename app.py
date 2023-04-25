@@ -138,12 +138,10 @@ def profile():
 @app.route('/profile/', methods=["GET"])
 def get_profile():
     user = Profile.query.filter_by(username=get_username()).first()
-    print(user.id)
     return render_template("profile_page.html",user=user)
 
 @app.route('/profile/<int:profile_id>/', methods=["GET"])
 def get_profile_by_id(profile_id):
-    print("hello")
-    user = Profile.query.filter_by(id=profile_id)
-    print(user.username)
+    user = Profile.query.get(profile_id)
+    print(user)
     return render_template("profile_page.html",user=user)
