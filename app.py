@@ -37,9 +37,26 @@ def authenticate(username, password):
 
     return False
 
+
 def is_secure_route(request):
-    return request.path not in ['/login/', '/logout/', '/profile/', '/profile/new/'] and \
-        not request.path.startswith('/static/') and not (request.path == '/profile/' and request.method == 'GET')
+    if request.method == 'GET':
+        if request.path in ['/profile/', '/', '/main/', '/api/posts/']:
+            # these are secure paths
+            return True
+        else:
+            return False
+    
+    elif request.method == 'POST':
+        print('post')
+        if request.path in ['/api/posts/']:
+            # these are secure paths
+            return True
+        else:
+            return False
+        
+    elif request.path.startswith('/static/'):
+        return True
+
 
 @app.before_request
 def login_redirect():
