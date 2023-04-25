@@ -7,6 +7,14 @@
   <p>Welcome, {{ username }}!</p>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+
+  <form id="post-form">
+    <h3>Create Post</h3>
+    <div class="form-group">
+      <textarea name="post-tex" id="post-text" rows="5" cols="50" wrap="soft" maxlength="144" style="overflow:hidden; resize:none;"></textarea>
+    </div>
+    <button id="post-btn" class="btn btn-primary">Post</button>
+  </form>
 {% endblock %}
 
 
