@@ -16,7 +16,6 @@ db = SQLAlchemy(app)
 
 from models import Profile, Post, Like
 
-
 from pathlib import Path
 
 IMAGE_DIR = 'static/img/profilephotos'
@@ -37,7 +36,6 @@ def authenticate(username, password):
 
     return False
 
-
 def is_secure_route(request):
     if request.method == 'GET':
         if request.path in ['/profile/', '/', '/main/', '/api/posts/']:
@@ -47,7 +45,6 @@ def is_secure_route(request):
             return False
     
     elif request.method == 'POST':
-        print('post')
         if request.path in ['/api/posts/']:
             # these are secure paths
             return True
@@ -56,7 +53,6 @@ def is_secure_route(request):
         
     elif request.path.startswith('/static/'):
         return True
-
 
 @app.before_request
 def login_redirect():
@@ -143,5 +139,46 @@ def get_profile():
 @app.route('/profile/<int:profile_id>/', methods=["GET"])
 def get_profile_by_id(profile_id):
     user = Profile.query.get(profile_id)
-    print(user)
     return render_template("profile_page.html",user=user)
+
+@app.route('/api/posts/', methods=['GET'])
+def get_posts():
+    user = Profile.query.filter_by(username=get_username()).first()
+    posts = user.posts
+
+    return jsonify(posts)
+
+@app.route('/api/posts/', methods=['POST'])
+def create_post():
+    post_text = request.text['post-text']
+    newpost = Post(content=post_text, profile_id=get_username())
+    db.session.add(newpost)
+    db.session.commit()
+
+    return jsonify(newpost.serialize())
+
+@app.route('/api/posts/?profile_id=<PROFILE_ID>', methods=['GET'])
+def get_posts_by_profile_id(profile_id):
+    user = Profile.query.filter_by(username=get_username()).first()
+    if user:
+        posts = user.posts
+        return jsonify(posts.serialize())
+    
+    else:
+        return []
+
+@app.route('/api/posts/<int:post_id>', methods=['GET'])
+def get_post_by_post_id(post_id):
+    post = Post.query.get(post_id)
+
+    return jsonify(post.serialize())
+
+@app.route('/api/posts/<int:post_id>/like/', methods=['POST'])
+def like_post(current_post_id):
+    likedUser = Profile.query.filter_by(username=get_username()).first()
+    post = Post.query.get(current_post_id)
+    postUser = post.profile_id
+    like = Like(profile_id=likedUser.id, post_id=current_post_id, profile=postUser)
+
+    db.session.add(like)
+    db.session.commit()
