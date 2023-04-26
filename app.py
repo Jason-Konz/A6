@@ -145,17 +145,20 @@ def get_profile_by_id(profile_id):
 def get_posts():
     user = Profile.query.filter_by(username=get_username()).first()
     posts = user.posts
+    posts = list(map(lambda p: p.serialize(), posts))
 
     return jsonify(posts)
 
 @app.route('/api/posts/', methods=['POST'])
 def create_post():
-    post_text = request.text['post-text']
-    newpost = Post(content=post_text, profile_id=get_username())
+    post_text = request.form['post-text']
+    user = Profile.query.filter_by(username=get_username()).first()
+    newpost = Post(content=post_text, profile_id=user.id)
+
     db.session.add(newpost)
     db.session.commit()
 
-    return jsonify(newpost.serialize())
+    return redirect(url_for('main'))
 
 @app.route('/api/posts/?profile_id=<PROFILE_ID>', methods=['GET'])
 def get_posts_by_profile_id(profile_id):
