@@ -1,7 +1,7 @@
 function insertPost(post) {
     let domTarget = $('#posts');
     let html = '<div class="post" postid="' + post.id + '">' +
-                '<span>' + post.content +'</span><p>Votes: ' +
+                '<br> <span>' + post.content +'</span><p>Votes: ' +
                 '<span class="votescount">' + post.numLikes + '</span></p>' +
                 '<button postid="' + post.id + '" class="upvote">upvote</button> / ' +
                 '<button postid="' + post.id + '" class="downvote">downvote</button>';
@@ -61,7 +61,9 @@ function clearPosts() {
 
 function getAllPosts() {
     console.log("We are here");
-    $.ajax('/api/posts/', {
+    let profid = $('#profile_id').attr('val');
+    console.log(profid);
+    $.ajax('/api/posts/?profile_id='+profid, {
         method: 'GET',
         dataType: 'json',
 
@@ -84,24 +86,24 @@ function reloadPosts() {
 }
 
 function sendPost() {
-    let form = $('#post-form')[0];
-    let data = new FormData(form);
+    let form = $('#post-form')[0];
+    let data = new FormData(form);
 
-    $('#post-btn').prop('disabled', true);
+    $('#post-btn').prop('disabled', true);
 
-    $.ajax({
-        type: 'POST',
-        enctype: 'multipart/form-data',
-        url: '/api/posts/',
-        data: data,
-        processData: false,
-        contentType: false,
+    $.ajax({
+        type: 'POST',
+        enctype: 'multipart/form-data',
+        url: '/api/posts/',
+        data: data,
+        processData: false,
+        contentType: false,
         success: reloadPosts,
-        error: function() {
-            $('#posts').html('Cannot post. Try again later.');
-            $('#post-btn').prop('disabled', false);
-        }
-    });
+        error: function() {
+            $('#posts').html('Cannot post. Try again later.');
+            $('#post-btn').prop('disabled', false);
+        }
+    });
 }
 
 

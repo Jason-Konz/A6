@@ -27,11 +27,18 @@ def get_username():
 
     return None
 
+def get_logged_in_id():
+    if 'login_id' in session:
+        return session['login_id']
+    
+    return None
+
 def authenticate(username, password):
     user = Profile.query.filter_by(username=username).first()
     
     if user and username == user.username and password == user.password:
         session['username'] = username
+        session['login_id'] = user.id
         return True
 
     return False
@@ -143,14 +150,19 @@ def get_profile_by_id(profile_id):
 
 @app.route('/api/posts/', methods=['GET'])
 def get_posts():
-    user = Profile.query.filter_by(username=get_username()).first()
-    posts = user.posts
+    prof_id = get_logged_in_id()
+    if 'profile_id' in request.args:
+        prof_id = request.args['profile_id']
+
+    posts = Post.query.filter_by(id=prof_id).all()
+
     posts = list(map(lambda p: p.serialize(), posts))
 
     return jsonify(posts)
 
 @app.route('/api/posts/', methods=['POST'])
 def create_post():
+    print("here")
     post_text = request.form['post-text']
     user = Profile.query.filter_by(username=get_username()).first()
     newpost = Post(content=post_text, profile_id=user.id)
@@ -160,15 +172,6 @@ def create_post():
 
     return redirect(url_for('main'))
 
-@app.route('/api/posts/?profile_id=<PROFILE_ID>', methods=['GET'])
-def get_posts_by_profile_id(profile_id):
-    user = Profile.query.get(profile_id)
-    if user:
-        posts = user.posts
-        return jsonify(posts.serialize())
-    
-    else:
-        return []
 
 @app.route('/api/posts/<int:post_id>', methods=['GET'])
 def get_post_by_post_id(post_id):
