@@ -2,7 +2,7 @@ function insertPost(post) {
     let domTarget = $('#posts');
     let profid = $('#profile_id').attr('val');
     let html = '<div class="post" postid="' + post.id + '">'+
-                '<span>' + post.content +'</span><p>'
+                '<br><span>' + post.content +'</span><p>'
 
     if (profid in post.likedBy){
         html += '<a href="#" postid="' + post.id + '" class="downvote">downvote</a>'

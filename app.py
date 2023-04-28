@@ -184,7 +184,7 @@ def like_post(post_id):
     likedUser = Profile.query.filter_by(username=get_username()).first()
     post = Post.query.get(post_id)
     postUser = post.profile_id
-    like = Like(profile_id=likedUser.id, post_id=current_post_id)
+    like = Like(profile_id=likedUser.id, post_id=post_id)
 
     db.session.add(like)
     db.session.commit()
@@ -203,8 +203,8 @@ def unlike_post(post_id):
     return 'ok'
 
 @app.route('/api/posts/<int:post_id>/likes/', methods=['GET'])
-def get_likes(current_post_id):
-    post = Post.query.filter_by(post_id=current_post_id)
+def get_likes(post_id):
+    post = Post.query.filter_by(post_id=post_id)
     likes=post.likes
 
     return jsonify(likes.serialize())
