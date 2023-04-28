@@ -4,7 +4,7 @@ function insertPost(post) {
     let html = '<div class="post" postid="' + post.id + '">'+
                 '<br><span>' + post.content +'</span><p>'
 
-    if (profid in post.likedBy){
+    if (post.likedBy.includes(parseInt(profid))){
         html += '<a href="#" postid="' + post.id + '" class="downvote">downvote</a>'
     } else{
         html += '<a href="#" postid="' + post.id + '" class="upvote">upvote</a> '
@@ -31,7 +31,7 @@ function like(postid){
 
         success: function(post) {
             let countElm = $('div.post[postid=' + post.id + ']').find('.votescount');
-            countElm.html(post.votes);
+            countElm.html(post.numLikes);
         },
 
         error: function() {
@@ -50,7 +50,7 @@ function unlike(postid){
 
         success: function(post) {
             let countElm = $('div.post[postid=' + post.id + ']').find('.votescount');
-            countElm.html(post.votes);
+            countElm.html(post.numLikes);
         },
 
         error: function() {
@@ -68,6 +68,7 @@ function clearPosts() {
 function getAllPosts() {
     console.log("We are here");
     let profid = $('#profile_id').attr('val');
+    console.log("ahhhh")
     console.log(profid);
     $.ajax('/api/posts/?profile_id='+profid, {
         method: 'GET',

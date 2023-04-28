@@ -154,9 +154,11 @@ def get_posts():
     if 'profile_id' in request.args:
         prof_id = request.args['profile_id']
 
-    posts = Post.query.filter_by(id=prof_id).all()
+    posts = Post.query.filter_by(profile_id=prof_id).all()
 
     posts = list(map(lambda p: p.serialize(), posts))
+
+    print(posts)
 
     return jsonify(posts)
 
@@ -169,6 +171,8 @@ def create_post():
 
     db.session.add(newpost)
     db.session.commit()
+
+    print(newpost.serialize())
 
     return redirect(url_for('main'))
 
