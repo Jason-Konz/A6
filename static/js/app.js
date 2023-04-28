@@ -1,10 +1,16 @@
 function insertPost(post) {
     let domTarget = $('#posts');
-    let html = '<div class="post" postid="' + post.id + '">' +
-                '<br> <span>' + post.content +'</span><p>Votes: ' +
-                '<span class="votescount">' + post.numLikes + '</span></p>' +
-                '<button postid="' + post.id + '" class="upvote">upvote</button> / ' +
-                '<button postid="' + post.id + '" class="downvote">downvote</button>';
+    let profid = $('#profile_id').attr('val');
+    let html = '<div class="post" postid="' + post.id + '">'+
+                '<span>' + post.content +'</span><p>'
+
+    if (profid in post.likedBy){
+        html += '<a href="#" postid="' + post.id + '" class="downvote">downvote</a>'
+    } else{
+        html += '<a href="#" postid="' + post.id + '" class="upvote">upvote</a> '
+    }
+    html+= '<span class="votescount">(# of Likes: ' + post.numLikes + ')</span></p>'
+
     domTarget.append(html);
 
     $('.upvote[postid=' + post.id + ']').click(function(event) {
