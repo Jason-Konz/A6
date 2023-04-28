@@ -5,23 +5,26 @@ function insertPost(post) {
                 '<br><span>' + post.content +'</span><p>'
 
     if (post.likedBy.includes(parseInt(profid))){
-        html += '<a href="#" postid="' + post.id + '" class="downvote">downvote</a>'
+        html += '<a href="#" postid="' + post.id + '" class="downvote">Unlike</a>'
     } else{
-        html += '<a href="#" postid="' + post.id + '" class="upvote">upvote</a> '
+        html += '<a href="#" postid="' + post.id + '" class="upvote">Like</a> '
     }
-    html+= '<span class="votescount">(# of Likes: ' + post.numLikes + ')</span></p>'
+    html+= '<a href="#" class="votescount">(' + post.numLikes + ' likes)</a></p>'
 
-    domTarget.append(html);
+    domTarget.prepend(html);
 
-    $('.upvote[postid=' + post.id + ']').click(function(event) {
-        event.preventDefault();
-        like(post.id);
-    });
-
-    $('.downvote[postid=' + post.id + ']').click(function(event) {
-        event.preventDefault();
-        unlike(post.id);
-    });
+    if (!post.likedBy.includes(parseInt(profid))){
+        $('.upvote[postid=' + post.id + ']').click(function(event) {
+            event.preventDefault();
+            like(post.id);
+        });
+    }
+    else{
+        $('.downvote[postid=' + post.id + ']').click(function(event) {
+            event.preventDefault();
+            unlike(post.id);
+        });
+    }
 }
 
 function like(postid){
@@ -30,8 +33,11 @@ function like(postid){
         dataType: 'json',
 
         success: function(post) {
+            console.log("success")
             let countElm = $('div.post[postid=' + post.id + ']').find('.votescount');
             countElm.html(post.numLikes);
+            console.log("reload")
+            reloadPosts();
         },
 
         error: function() {
@@ -51,6 +57,7 @@ function unlike(postid){
         success: function(post) {
             let countElm = $('div.post[postid=' + post.id + ']').find('.votescount');
             countElm.html(post.numLikes);
+            reloadPosts();
         },
 
         error: function() {
@@ -89,7 +96,7 @@ function getAllPosts() {
 
 function reloadPosts() {
     $('#posts').html('Reloading...');
-    window.setTimeout(getAllPosts, 2000);
+    window.setTimeout(getAllPosts, 0);
 }
 
 function sendPost() {
