@@ -162,7 +162,7 @@ def create_post():
 
 @app.route('/api/posts/?profile_id=<PROFILE_ID>', methods=['GET'])
 def get_posts_by_profile_id(profile_id):
-    user = Profile.query.filter_by(username=get_username()).first()
+    user = Profile.query.get(profile_id)
     if user:
         posts = user.posts
         return jsonify(posts.serialize())

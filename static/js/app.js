@@ -2,7 +2,7 @@ function insertPost(post) {
     let domTarget = $('#posts');
     let html = '<div class="post" postid="' + post.id + '">' +
                 '<span>' + post.content +'</span><p>Votes: ' +
-                '<span class="votescount">' + (post.likes).length + '</span></p>' +
+                '<span class="votescount">' + post.numLikes + '</span></p>' +
                 '<button postid="' + post.id + '" class="upvote">upvote</button> / ' +
                 '<button postid="' + post.id + '" class="downvote">downvote</button>';
     domTarget.append(html);
