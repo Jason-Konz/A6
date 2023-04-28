@@ -180,11 +180,11 @@ def get_post_by_post_id(post_id):
     return jsonify(post.serialize())
 
 @app.route('/api/posts/<int:post_id>/like/', methods=['POST'])
-def like_post(current_post_id):
+def like_post(post_id):
     likedUser = Profile.query.filter_by(username=get_username()).first()
-    post = Post.query.get(current_post_id)
+    post = Post.query.get(post_id)
     postUser = post.profile_id
-    like = Like(profile_id=likedUser.id, post_id=current_post_id, profile=postUser)
+    like = Like(profile_id=likedUser.id, post_id=current_post_id)
 
     db.session.add(like)
     db.session.commit()
@@ -192,10 +192,10 @@ def like_post(current_post_id):
     return 'ok'
 
 @app.route('/api/posts/<int:post_id>/unlike/', methods=['POST'])
-def unlike_post(current_post_id):
+def unlike_post(post_id):
     unLikedUser = Profile.query.filter_by(username=get_username()).first()
-    post = Post.query.get(current_post_id)
-    like = Like.query.query.filter_by(profile_id=unLikedUser.id, post_id=post.id)
+    post = Post.query.get(post_id)
+    like = Like.query.query.filter_by(profile_id=unLikedUser.id)
 
     db.session.delete(like)
     db.session.commit()
