@@ -141,12 +141,14 @@ def profile():
 @app.route('/profile/', methods=["GET"])
 def get_profile():
     user = Profile.query.filter_by(username=get_username()).first()
-    return render_template("profile_page.html",user=user)
+    return render_template("profile_page.html",user=user, activeUser = user)
 
 @app.route('/profile/<int:profile_id>/', methods=["GET"])
 def get_profile_by_id(profile_id):
     user = Profile.query.get(profile_id)
-    return render_template("profile_page.html",user=user)
+    activeUser = Profile.query.filter_by(username=get_username()).first()
+    
+    return render_template("profile_page.html",user=user, activeUser = activeUser)
 
 @app.route('/api/posts/', methods=['GET'])
 def get_posts():
@@ -158,13 +160,11 @@ def get_posts():
 
     posts = list(map(lambda p: p.serialize(), posts))
 
-    print(posts)
 
     return jsonify(posts)
 
 @app.route('/api/posts/', methods=['POST'])
 def create_post():
-    print("here")
     post_text = request.form['post-text']
     user = Profile.query.filter_by(username=get_username()).first()
     newpost = Post(content=post_text, profile_id=user.id)
@@ -172,7 +172,6 @@ def create_post():
     db.session.add(newpost)
     db.session.commit()
 
-    print(newpost.serialize())
 
     return redirect(url_for('main'))
 
@@ -208,7 +207,12 @@ def unlike_post(post_id):
 
 @app.route('/api/posts/<int:post_id>/likes/', methods=['GET'])
 def get_likes(post_id):
-    post = Post.query.filter_by(post_id=post_id)
-    likes=post.likes
+    print("get likes")
+    post = Post.query.filter_by(id=post_id).first()
+    likes=post.liked_by()
+    print(likes)
+    profiles = list(map(lambda p: Profile.query.get(p).serialize(), likes))
+    print(profiles)
 
-    return jsonify(likes.serialize())
+    return jsonify(profiles)
+

@@ -1,19 +1,41 @@
 function insertPost(post) {
     let domTarget = $('#posts');
-    let profid = $('#profile_id').attr('val');
+    let profid = $('#profile_id').attr('profile_id');
+    let activeid = $('#profile_id').attr('active_id');
     let html = '<div class="post" postid="' + post.id + '">'+
                 '<br><span>' + post.content +'</span><p>'
 
-    if (post.likedBy.includes(parseInt(profid))){
+    if (post.likedBy.includes(parseInt(activeid))){
         html += '<a href="#" postid="' + post.id + '" class="downvote">Unlike</a>'
     } else{
         html += '<a href="#" postid="' + post.id + '" class="upvote">Like</a> '
     }
-    html+= '<a href="#" class="votescount">(' + post.numLikes + ' likes)</a></p>'
+    html+=
+    '<a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">' +
+      post.numLikes +
+    '</a>' +
+    '<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">' +
+      '<div class="modal-dialog">' +
+        '<div class="modal-content">' +
+          '<div class="modal-header">' +
+            '<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
+          '</div>' +
+          '<div class="modal-body" postid = "'+post.id+'"">' +
+            '...' +
+          '</div>' +
+          '<div class="modal-footer">' +
+            '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>' +
+            '<button type="button" class="btn btn-primary">Save changes</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
 
     domTarget.prepend(html);
 
-    if (!post.likedBy.includes(parseInt(profid))){
+    if (!post.likedBy.includes(parseInt(activeid))){
         $('.upvote[postid=' + post.id + ']').click(function(event) {
             event.preventDefault();
             like(post.id);
@@ -25,6 +47,39 @@ function insertPost(post) {
             unlike(post.id);
         });
     }
+
+    getLikes(post.id);
+}
+
+function insertProfile(profile, postid){
+
+    let modalContent = $('.modal-body[postid=' + postid +']');
+    html = '<p>'+ profile.username + '</p>';
+
+    console.log(html);
+
+    modalContent.prepend(html);
+
+}
+function getLikes(postid){
+    $.ajax('/api/posts/' + postid + '/likes/', {
+        method: 'GET',
+        dataType: 'json',
+
+        success: function(profiles) {
+            clearProfiles(postid);
+            profiles.forEach(function(profile) {
+                insertProfile(profile, postid);
+            });
+        },
+
+        error: function() {
+            console.log('I have been disenfranchised!!!!!');
+        }
+    });
+
+
+
 }
 
 function like(postid){
@@ -72,9 +127,15 @@ function clearPosts() {
     domTarget.html('');
 }
 
+function clearProfiles(postid) {
+    console.log("CLEARED ITEMS");
+    let modalContent = $('.modal-body[postid=' + postid +']');
+    modalContent.html('');
+}
+
 function getAllPosts() {
     console.log("We are here");
-    let profid = $('#profile_id').attr('val');
+    let profid = $('#profile_id').attr('profile_id');
     console.log("ahhhh")
     console.log(profid);
     $.ajax('/api/posts/?profile_id='+profid, {

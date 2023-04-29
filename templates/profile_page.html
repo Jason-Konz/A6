@@ -5,7 +5,7 @@
 
 {% block content %}
     
-    <div id="profile_id" val="{{user.id}}">
+    <div id="profile_id" profile_id="{{user.id}}" active_id="{{activeUser.id}}">
         <img src="{{ url_for('static', filename='/img/profilephotos/' + user.photofn) }}"><br>
         <span>Username: {{user.username}}</span> <br>
         <span>Email: {{user.email}}</span>
