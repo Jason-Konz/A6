@@ -44,20 +44,23 @@ def authenticate(username, password):
     return False
 
 def is_secure_route(request):
+#    return request.path not in ['/login/', '/logout/', '/profile/new/', '/profile/',] and \
+#            not request.path.startswith('/static/')
     if request.method == 'GET':
+
         if request.path in ['/profile/', '/', '/main/', '/api/posts/']:
             # these are secure paths
             return True
         else:
             return False
-    
+   
     elif request.method == 'POST':
         if request.path in ['/api/posts/']:
-            # these are secure paths
+           # these are secure paths
             return True
         else:
             return False
-        
+       
     elif request.path.startswith('/static/'):
         return True
 
@@ -120,7 +123,6 @@ def profile():
     infile.filename = new_username + "-" + infile.filename
     filename = secure_filename(infile.filename)
     filepath = os.path.join(IMAGE_DIR, filename)
-    print(infile)
 
 
     user = Profile.query.filter_by(username=new_username).first()
@@ -186,7 +188,6 @@ def get_post_by_post_id(post_id):
 def like_post(post_id):
     likedUser = Profile.query.filter_by(username=get_username()).first()
     post = Post.query.get(post_id)
-    #postUser = post.profile_id
     like = Like(profile_id=likedUser.id, post_id=post_id)
 
     db.session.add(like)
@@ -207,12 +208,10 @@ def unlike_post(post_id):
 
 @app.route('/api/posts/<int:post_id>/likes/', methods=['GET'])
 def get_likes(post_id):
-    print("get likes")
     post = Post.query.filter_by(id=post_id).first()
     likes=post.liked_by()
     print(likes)
     profiles = list(map(lambda p: Profile.query.get(p).serialize(), likes))
-    print(profiles)
 
     return jsonify(profiles)
 

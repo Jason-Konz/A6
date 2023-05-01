@@ -6,23 +6,22 @@ function insertPost(post) {
                 '<br><span>' + post.content +'</span><p>'
 
     if (post.likedBy.includes(parseInt(activeid))){
-        html += '<a href="#" postid="' + post.id + '" class="downvote">Unlike</a>'
+        html += '<a href="#" postid="' + post.id + '" class="downvote">Unlike | </a>'
     } else{
-        html += '<a href="#" postid="' + post.id + '" class="upvote">Like</a> '
+        html += '<a href="#" postid="' + post.id + '" class="upvote">Like | </a> '
     }
     html+=
-    '<a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">' +
+    '<a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal'+post.id+'">' +
       post.numLikes +
     '</a>' +
-    '<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">' +
+    '<div class="modal fade" id="exampleModal'+post.id+'" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">' +
       '<div class="modal-dialog">' +
         '<div class="modal-content">' +
           '<div class="modal-header">' +
-            '<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>' +
+            '<h5 class="modal-title" id="exampleModalLabel">Likes</h5>' +
             '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
           '</div>' +
           '<div class="modal-body" postid = "'+post.id+'"">' +
-            '...' +
           '</div>' +
           '<div class="modal-footer">' +
             '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>' +
@@ -48,20 +47,24 @@ function insertPost(post) {
         });
     }
 
+
     getLikes(post.id);
 }
 
 function insertProfile(profile, postid){
+    console.log("GOT to insert")
+    console.log(profile)
+    console.log(postid)
 
     let modalContent = $('.modal-body[postid=' + postid +']');
     html = '<p>'+ profile.username + '</p>';
-
-    console.log(html);
 
     modalContent.prepend(html);
 
 }
 function getLikes(postid){
+    console.log("get likes")
+    console.log(postid)
     $.ajax('/api/posts/' + postid + '/likes/', {
         method: 'GET',
         dataType: 'json',
@@ -91,7 +94,6 @@ function like(postid){
             console.log("success")
             let countElm = $('div.post[postid=' + post.id + ']').find('.votescount');
             countElm.html(post.numLikes);
-            console.log("reload")
             reloadPosts();
         },
 
@@ -128,16 +130,12 @@ function clearPosts() {
 }
 
 function clearProfiles(postid) {
-    console.log("CLEARED ITEMS");
     let modalContent = $('.modal-body[postid=' + postid +']');
     modalContent.html('');
 }
 
 function getAllPosts() {
-    console.log("We are here");
     let profid = $('#profile_id').attr('profile_id');
-    console.log("ahhhh")
-    console.log(profid);
     $.ajax('/api/posts/?profile_id='+profid, {
         method: 'GET',
         dataType: 'json',
