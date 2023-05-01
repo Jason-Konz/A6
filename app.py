@@ -143,14 +143,19 @@ def profile():
 @app.route('/profile/', methods=["GET"])
 def get_profile():
     user = Profile.query.filter_by(username=get_username()).first()
-    return render_template("profile_page.html",user=user, activeUser = user)
+    if user:
+        return render_template("profile_page.html",user=user, activeUser = user)
+    else:
+        return redirect(url_for('main'))
 
 @app.route('/profile/<int:profile_id>/', methods=["GET"])
 def get_profile_by_id(profile_id):
     user = Profile.query.get(profile_id)
     activeUser = Profile.query.filter_by(username=get_username()).first()
-    
-    return render_template("profile_page.html",user=user, activeUser = activeUser)
+    if user:
+        return render_template("profile_page.html",user=user, activeUser = activeUser)
+    else:
+        return redirect(url_for('main'))
 
 @app.route('/api/posts/', methods=['GET'])
 def get_posts():
