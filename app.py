@@ -48,7 +48,7 @@ def is_secure_route(request):
 #            not request.path.startswith('/static/')
     if request.method == 'GET':
 
-        if request.path in ['/profile/', '/', '/main/', '/api/posts/']:
+        if request.path in ['/profile/', '/', '/main/', '/api/posts/'] or request.path.startswith('/api/'):
             # these are secure paths
             return True
         else:
@@ -61,12 +61,13 @@ def is_secure_route(request):
         else:
             return False
        
-    elif request.path.startswith('/static/'):
+    elif request.path.startswith('/static/') and request.path.startswith('/api/'):
         return True
 
 @app.before_request
 def login_redirect():
     if get_username() == None and is_secure_route(request):
+        # return render_template('login_form.html')
         return redirect(url_for('login_form'))
 
 @app.before_first_request
