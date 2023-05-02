@@ -48,7 +48,7 @@ def is_secure_route(request):
 #            not request.path.startswith('/static/')
     if request.method == 'GET':
 
-        if request.path in ['/profile/', '/', '/main/', '/api/posts/']:
+        if request.path in ['/profile/', '/', '/main/', '/api/posts/'] or request.path.startswith('/profile/'):
             # these are secure paths
             return True
         else:
